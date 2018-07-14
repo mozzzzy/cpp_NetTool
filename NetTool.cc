@@ -10,7 +10,7 @@
 /*
  * name look up
  */
-int nameLookup(const char *hostname, const char *service, struct addrinfo *&res){
+int nameLookup(std::string hostname, std::string service, struct addrinfo *&res){
 
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof(hints));
@@ -18,8 +18,7 @@ int nameLookup(const char *hostname, const char *service, struct addrinfo *&res)
 	hints.ai_family = AF_INET;
 
 	int err;
-	if((err = getaddrinfo(hostname, service, &hints, &res)) != 0) {
-		std::cout << "err" << std::endl;
+	if((err = getaddrinfo(hostname.c_str(), service.c_str(), &hints, &res)) != 0) {
 		return err;
 	}
 
@@ -29,7 +28,7 @@ int nameLookup(const char *hostname, const char *service, struct addrinfo *&res)
 /*
  * create socket
  */
-int connectServer(const char *hostname, const char *service){
+int connectServer(std::string hostname, std::string service){
 
 	int sock = -1;
 	struct addrinfo *res, *resc;
@@ -70,8 +69,10 @@ int connectServer(const char *hostname, const char *service){
 #ifdef DEBUG
 int main(void){
 
-	const char *hostname = "www.google.com";
-	const char *service = "80";
+	//const char *hostname = "www.google.com";
+	std::string hostname = "www.google.com";
+	//const char *service = "80";
+	std::string service = "80";
 	struct addrinfo *res;
 
 	// name lookup

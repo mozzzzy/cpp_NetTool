@@ -1,9 +1,9 @@
 /*
  * name look up
  */
-int nameLookup(const char *hostname, const char *service, struct addrinfo *&res);
+int nameLookup(std::string hostname, std::string service, struct addrinfo *&res);
 
 /*
  * create socket
  */
-int connectServer(const char *hostname, const char *service);
+int connectServer(std::string hostname, std::string service);
