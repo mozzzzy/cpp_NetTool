@@ -108,18 +108,15 @@ void httpsGet(SSL *&ssl, std::string hostname, std::string port, std::string pat
 
 	/* read response */
 	response = "";
-	char tmp_read_buf[1024];
+	int tmp_read_buf_size = 1024;
+	char tmp_read_buf[tmp_read_buf_size];
 	int read_size = 0;
-    while( (read_size = SSL_read(ssl, tmp_read_buf, 1024)) ){
-		response += tmp_read_buf;
+    while( (read_size = SSL_read(ssl, tmp_read_buf, tmp_read_buf_size)) ){
+		std::string read_str(tmp_read_buf);
+		response += read_str.substr(0,read_size);
     }
 
 }
-
-
-
-
-
 
 
 /*
@@ -223,7 +220,7 @@ int main(void){
 	std::string https_path = "/";
 	std::string https_query = "";
 	httpsGet(ssl, hostname, service, https_path, https_query, https_response);
-	std::cout << "response : " << https_response << std::endl;
+	std::cout << "======= response =======\n" << https_response << "====== ======== ======\n";
 
 	/*close ssl connection*/
     SSL_shutdown(ssl);
@@ -238,7 +235,7 @@ int main(void){
 	 * https Get test
 	 */
 	std::string response = instantHttpsGet("www.workspace01gl.net", "10443", "/", "");
-	std::cout << "response : " << response;
+	std::cout << "======= response =======\n" << response << "====== ======== ======\n";
 
 
 
