@@ -183,7 +183,7 @@ std::string instantHttpsGet(std::string hostname, std::string port, std::string 
 int main(void){
 
 	std::string hostname = "www.workspace01gl.net";
-	std::string service = "10443";
+	std::string service = "443";
 	struct addrinfo *res;
 
 	/*
@@ -234,7 +234,7 @@ int main(void){
 	/*
 	 * https Get test
 	 */
-	std::string response = instantHttpsGet("www.workspace01gl.net", "10443", "/", "");
+	std::string response = instantHttpsGet("www.workspace01gl.net", "443", "/", "");
 	std::cout << "======= response =======\n" << response << "====== ======== ======\n";
 
 
