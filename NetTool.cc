@@ -92,7 +92,7 @@ void connectSSL(int connectedSock, SSL *&ssl, SSL_CTX *&ctx){
 /*
  * send https GET
  */
-void httpsGet(SSL *&ssl, std::string hostname, std::string port, std::string path, std::string query, std::string &response){
+void httpsGet(SSL *&ssl, std::string hostname, std::string port, std::string path, std::string additional_headers[], int header_size, std::string query, std::string &response){
 
 
 	// create write message
@@ -101,7 +101,16 @@ void httpsGet(SSL *&ssl, std::string hostname, std::string port, std::string pat
 		write_buf += "?" + query;
 	}
 	write_buf += " HTTP/1.1\r\n";
-	write_buf += "Host: " + hostname + "\r\n" + "User-Agent: NetTool\r\n" + "Accept: */*\r\n\r\n";
+	write_buf += "Host: " + hostname + "\r\n"
+			   + "User-Agent: NetTool\r\n"
+			   + "Accept: */*\r\n";
+
+	int hc = 0;
+	for( hc = 0; hc < header_size; hc ++ ){
+		write_buf += additional_headers[hc] + "\r\n";
+	}
+	write_buf += "\r\n";
+
 
 	// send message
 	SSL_write(ssl, write_buf.c_str(), strlen(write_buf.c_str()));
@@ -121,7 +130,7 @@ void httpsGet(SSL *&ssl, std::string hostname, std::string port, std::string pat
 /*
  * send https GET only this function
  */
-std::string instantHttpsGet(std::string hostname, std::string port, std::string path, std::string query){
+std::string instantHttpsGet(std::string hostname, std::string port, std::string path, std::string additional_headers[], int header_size, std::string query){
 
 	// create tcp connection
 	int connectedSock = connectServer(hostname, port);
@@ -137,7 +146,18 @@ std::string instantHttpsGet(std::string hostname, std::string port, std::string 
 		write_buf += "?" + query;
 	}
 	write_buf += " HTTP/1.1\r\n";
-	write_buf += "Host: " + hostname + "\r\n" + "User-Agent: NetTool\r\n" + "Accept: */*\r\n\r\n";
+	//write_buf += "Host: " + hostname + "\r\n" + "User-Agent: NetTool\r\n" + "Accept: */*\r\n\r\n";
+	write_buf += "Host: " + hostname + "\r\n" 
+			   + "User-Agent: NetTool\r\n" 
+			   + "Accept: */*\r\n";
+
+	int hc = 0;
+	for( hc = 0; hc < header_size; hc ++ ){
+		write_buf += additional_headers[hc] + "\r\n";
+	}
+	write_buf += "\r\n";
+
+
 
 	// send message
     SSL_write(ssl, write_buf.c_str(), strlen(write_buf.c_str()));
@@ -182,7 +202,7 @@ std::string instantHttpsGet(std::string hostname, std::string port, std::string 
 #ifdef DEBUG
 int main(void){
 
-	std::string hostname = "www.workspace01gl.net";
+	std::string hostname = "www.sample.net";
 	std::string service = "443";
 	struct addrinfo *res;
 
@@ -219,7 +239,8 @@ int main(void){
 	std::string https_response = "";
 	std::string https_path = "/";
 	std::string https_query = "";
-	httpsGet(ssl, hostname, service, https_path, https_query, https_response);
+	std::string additional_headers[] = {"X-forward: xfval", "X-path: xpval"};
+	httpsGet(ssl, hostname, service, https_path, additional_headers, 2, https_query, https_response);
 	std::cout << "======= response =======\n" << https_response << "====== ======== ======\n";
 
 	/*close ssl connection*/
@@ -232,9 +253,9 @@ int main(void){
 
 
 	/*
-	 * https Get test
+	 * instant https Get test
 	 */
-	std::string response = instantHttpsGet("www.workspace01gl.net", "443", "/", "");
+	std::string response = instantHttpsGet(hostname, service, https_path, additional_headers, 2, https_query);
 	std::cout << "======= response =======\n" << response << "====== ======== ======\n";
 
 
