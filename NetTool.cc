@@ -115,7 +115,6 @@ void httpsGet(SSL *&ssl, std::string hostname, std::string port, std::string pat
 		std::string read_str(tmp_read_buf);
 		response += read_str.substr(0,read_size);
     }
-
 }
 
 
@@ -150,7 +149,8 @@ std::string instantHttpsGet(std::string hostname, std::string port, std::string 
     char tmp_read_buf[1024];
     int read_size = 0;
     while( (read_size = SSL_read(ssl, tmp_read_buf, 1024)) ){
-		read_buf += tmp_read_buf;
+		std::string read_str(tmp_read_buf);
+		read_buf += read_str.substr(0,read_size);
     }
 
 
